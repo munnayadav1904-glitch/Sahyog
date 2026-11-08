@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SAHYOG — Connecting People & Opportunities</title>
+<style>
+:root{--navy:#073b70;--blue:#087eaa;--gold:#ffbd36;--bg:#f3f6fa}
+*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:var(--bg);color:#172033}
+header{background:var(--navy);color:#fff;padding:16px 4%;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.logo{font-size:28px;font-weight:800;letter-spacing:2px}header small{display:block;margin-top:4px}
+nav{display:flex;gap:7px;flex-wrap:wrap}button{border:0;border-radius:8px;padding:11px 15px;background:var(--gold);font-weight:700;cursor:pointer}
+nav button{background:#fff;color:var(--navy)}button.secondary{background:#e6edf5;color:#17324d}button.danger{background:#b42318;color:#fff}
+.hero{padding:48px 5%;text-align:center;color:white;background:linear-gradient(120deg,var(--navy),var(--blue))}
+.hero h1{font-size:clamp(28px,5vw,44px);margin:0 0 12px}.hero p{line-height:1.6}
+.actions{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:22px}
+main{max-width:1100px;margin:auto;padding:18px 13px}.section{background:#fff;padding:20px;border-radius:13px;margin:17px 0;box-shadow:0 3px 14px #10243b10}
+h2{color:var(--navy);margin-top:0}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:13px}
+.card{border:1px solid #e1e7ef;border-radius:11px;padding:14px;overflow-wrap:anywhere}.card img,.card video{width:100%;max-height:320px;object-fit:contain;background:#edf1f5;border-radius:8px;margin-top:8px}
+form{display:grid;gap:10px}input,select,textarea{width:100%;padding:11px;border:1px solid #cbd5e1;border-radius:8px;font:inherit}textarea{min-height:80px}
+label{font-size:14px}.muted,.small{color:#58677a}.small{font-size:12px}.notice{background:#fff4d6;padding:12px;border-radius:8px;margin:10px 0}
+.hidden{display:none!important}.tag{display:inline-block;background:#e8f3ff;color:#064477;border-radius:20px;padding:4px 8px;font-size:12px}
+footer{background:#092f56;color:#fff;text-align:center;padding:23px;margin-top:25px}
+@media(max-width:600px){header{justify-content:center;text-align:center}nav{justify-content:center}.hero{padding:35px 16px}}
+</style>
+</head>
+<body>
+<header>
+ <div><div class="logo">SAHYOG</div><small>Connecting Workers, Businesses & Opportunities</small></div>
+ <nav>
+  <button onclick="go('home')">Home</button><button onclick="go('workers')">Find Worker</button>
+  <button onclick="go('businesses')">Find Businesses</button><button onclick="go('products')">सामान खरीदें</button>
+ </nav>
+</header>
+
+<section class="hero" id="home">
+ <h1>Welcome to Sahyog</h1>
+ <p>Find workers, discover businesses, and explore products in one place.</p>
+ <div class="actions">
+  <button onclick="go('workers')">Find Worker</button>
+  <button onclick="go('businesses')">Find Businesses</button>
+  <button onclick="go('products')">सामान खरीदें</button>
+  <button onclick="go('register')">Register</button>
+ </div>
+</section>
+
+<main>
+ <section class="section" id="register">
+  <h2>Register on Sahyog</h2>
+  <div class="grid">
+   <div class="card"><h3>Worker Registration</h3>
+    <form id="workerForm">
+     <input name="name" placeholder="Name" required maxlength="70">
+     <input name="work" placeholder="Type of work / skill" required maxlength="100">
+     <select name="skill" required><option value="">Select skill level</option><option>Skilled</option><option>Unskilled / Helper</option><option>Trainee</option></select>
+     <input name="city" placeholder="City / area" required maxlength="80">
+     <textarea name="about" placeholder="Experience / details" maxlength="400"></textarea>
+     <button>Submit Worker Registration</button>
+    </form>
+   </div>
+   <div class="card"><h3>Business Owner Registration</h3>
+    <form id="businessForm">
+     <input name="businessName" placeholder="Your Business Name" required maxlength="90">
+     <input name="work" placeholder="What work / help is needed?" required maxlength="130">
+     <select name="skill"><option>Skilled</option><option>Unskilled / Helper</option><option>Either</option></select>
+     <input name="salary" placeholder="Salary offered" required maxlength="60">
+     <input name="count" type="number" min="1" max="500" placeholder="Number of workers needed" required>
+     <input name="city" placeholder="City / area" required maxlength="80">
+     <textarea name="details" placeholder="Other details" maxlength="400"></textarea>
+     <button>Register Business</button>
+    </form>
+   </div>
+  </div>
+ </section>
+
+ <section class="section" id="workers"><h2>Find Worker</h2><p class="muted">Browse worker profiles. Personal contact details are not shown publicly.</p><div id="workerList" class="grid">Loading…</div></section>
+ <section class="section" id="businesses"><h2>Find Businesses</h2><p class="muted">Every business has its own Join button.</p><div id="businessList" class="grid">Loading…</div></section>
+
+ <section class="section" id="products"><h2>सामान खरीदें</h2><p class="muted">Products listed by sellers.</p><div id="productList" class="grid">Loading…</div></section>
+ <section class="section"><h2>सामान बेचें / Sell Products</h2>
+  <form id="productForm">
+   <input name="sellerName" placeholder="Seller name" required maxlength="70">
+   <input name="title" placeholder="Product name" required maxlength="90">
+   <input name="price" placeholder="Price (₹)" required maxlength="30">
+   <input name="city" placeholder="City / area" required maxlength="80">
+   <textarea name="description" placeholder="Product details" maxlength="400"></textarea>
+   <label>Choose up to 3 product photos <input name="photos" type="file" accept="image/*" multiple required></label>
+   <button>Publish Product</button>
+  </form>
+ </section>
+
+ <section class="section" id="ads"><h2>Advertisements</h2><p class="muted">Company photos and videos published by Sahyog Admin.</p><div id="adList" class="grid">Loading…</div></section>
+
+ <!-- This entire admin area is hidden from ordinary visitors; Firebase rules also enforce permissions. -->
+ <section class="section hidden" id="adminPanel">
+  <h2>Admin Controls</h2><p class="small">Only the authorized admin account can see and use these controls.</p>
+  <button id="loginBtn">Admin Login</button>
+  <div id="adminTools" class="hidden">
+   <h3>Publish Advertisement</h3>
+   <form id="adForm">
+    <input name="title" placeholder="Advertisement title" required maxlength="90">
+    <textarea name="description" placeholder="Advertisement details" maxlength="400"></textarea>
+    <label>Select photos/videos (up to 5 files) <input name="media" type="file" accept="image/*,video/*" multiple required></label>
+    <button>Publish Advertisement for Everyone</button>
+   </form>
+   <h3>Review Registrations & Products</h3><div id="reviewList" class="grid"></div>
+   <h3>Manage Advertisements</h3><div id="adminAdList" class="grid"></div>
+   <button class="secondary" id="logoutBtn" type="button">Admin Logout</button>
+  </div>
+ </section>
+ <p class="notice small"><b>Important:</b> This is a starter implementation. Before a public launch, have a trusted adult review privacy, safety, legal requirements, moderation, and costs. Do not publish personal phone numbers or invite minors to unsafe work. Verify users and businesses before approving listings.</p>
+</main>
+<footer><b>SAHYOG</b><p>Connecting People. Creating Opportunities.</p><small>© 2026 Sahyog</small></footer>
+
+<script type="module">
+import {initializeApp} from "https://www.gstatic.com/firebasejs/12.5.0/firebase-app.js";
+import {getAuth,onAuthStateChanged,signInWithEmailAndPassword,signOut} from "https://www.gstatic.com/firebasejs/12.5.0/firebase-auth.js";
+import {getFirestore,collection,addDoc,getDocs,query,where,orderBy,serverTimestamp,deleteDoc,doc,updateDoc} from "https://www.gstatic.com/firebasejs/12.5.0/firebase-firestore.js";
+import {getStorage,ref,uploadBytes,getDownloadURL,deleteObject} from "https://www.gstatic.com/firebasejs/12.5.0/firebase-storage.js";
+
+/* Paste the Firebase Web App configuration from Firebase Console. */
+const firebaseConfig={
+ apiKey:"PASTE_API_KEY",authDomain:"PASTE_AUTH_DOMAIN",projectId:"PASTE_PROJECT_ID",
+ storageBucket:"PASTE_STORAGE_BUCKET",messagingSenderId:"PASTE_SENDER_ID",appId:"PASTE_APP_ID"
+};
+/* Create your admin account in Firebase Authentication, then paste its User UID here. */
+const ADMIN_UID="PASTE_ADMIN_UID";
+const configured=Object.values(firebaseConfig).every(v=>v && !v.startsWith("PASTE_")) && ADMIN_UID && !ADMIN_UID.startsWith("PASTE_");
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+window.go=id=>$(id).scrollIntoView({behavior:"smooth"});
+let auth,db,storage,currentUser=null;
+function formObj(form){return Object.fromEntries(new FormData(form).entries())}
+function say(s){alert(s)}
+function makeCard(title,body,buttons=""){const el=document.createElement("article");el.className="card";el.innerHTML=`<h3>${esc(title)}</h3>${body}${buttons}`;return el}
+async function uploadFile(file,path){
+ if(file.size>45*1024*1024)throw new Error("Each file must be smaller than 45 MB.");
+ const r=ref(storage,path);await uploadBytes(r,file);return {url:await getDownloadURL(r),path,type:file.type};
+}
+async function addPublicAndPrivate(collectionName,publicData,privateData){
+ const result=await addDoc(collection(db,collectionName),{...publicData,status:"pending",createdAt:serverTimestamp()});
+ if(privateData && Object.keys(privateData).length)await addDoc(collection(db,collectionName,result.id,"private"),{...privateData,createdAt:serverTimestamp()});
+}
+if(!configured){
+ ["workerList","businessList","productList","adList"].forEach(id=>$(id).innerHTML='<p class="notice">Firebase is not configured. Add your Firebase Web App settings and admin UID in this file.</p>');
+ if(new URLSearchParams(location.search).get("admin")==="1") $("adminPanel").classList.remove("hidden");
+}else{
+ const app=initializeApp(firebaseConfig);auth=getAuth(app);db=getFirestore(app);storage=getStorage(app);
+ onAuthStateChanged(auth,async user=>{
+  currentUser=user;const admin=!!user&&user.uid===ADMIN_UID;
+  const adminRoute = new URLSearchParams(location.search).get("admin") === "1";
+  $("adminPanel").classList.toggle("hidden",!(admin || adminRoute));
+  $("adminTools").classList.toggle("hidden",!admin);
+  $("loginBtn").classList.toggle("hidden",admin);
+  if(admin)await loadAdmin();
+ });
+ loadWorkers();loadBusinesses();loadProducts();loadAds();
+}
+$("loginBtn").onclick=async()=>{
+ const email=prompt("Admin email");if(!email)return;const password=prompt("Admin password");if(!password)return;
+ try{const cred=await signInWithEmailAndPassword(auth,email,password);if(cred.user.uid!==ADMIN_UID){await signOut(auth);say("Access denied.");}}
+ catch(e){say("Login failed: "+e.message)}
+};
+$("logoutBtn").onclick=()=>signOut(auth);
+
+$("workerForm").onsubmit=async e=>{
+ e.preventDefault();if(!configured)return say("Configure Firebase first.");
+ const f=e.target,d=formObj(f);
+ try{await addPublicAndPrivate("workers",{name:d.name,work:d.work,skill:d.skill,city:d.city,about:d.about},{});
+ f.reset();say("Worker registration received. It will appear after admin review.");}
+ catch(err){say("Submission failed: "+err.message)}
+};
+$("businessForm").onsubmit=async e=>{
+ e.preventDefault();if(!configured)return say("Configure Firebase first.");
+ const f=e.target,d=formObj(f);
+ try{await addPublicAndPrivate("businesses",{businessName:d.businessName,work:d.work,skill:d.skill,salary:d.salary,count:Number(d.count),city:d.city,details:d.details},{});
+ f.reset();say("Business registration received. It will appear after admin review.");}
+ catch(err){say("Submission failed: "+err.message)}
+};
+$("productForm").onsubmit=async e=>{
+ e.preventDefault();if(!configured)return say("Configure Firebase first.");
+ const f=e.target,d=formObj(f),files=[...f.elements.photos.files];
+ if(files.length<1||files.length>3)return say("Choose 1 to 3 photos.");
+ if(files.some(x=>!x.type.startsWith("image/")))return say("Only image files are allowed.");
+ try{
+  const photos=[];for(const file of files)photos.push(await uploadFile(file,`products/${crypto.randomUUID()}_${file.name}`));
+  await addPublicAndPrivate("products",{sellerName:d.sellerName,title:d.title,price:d.price,city:d.city,description:d.description,photos},{});
+  f.reset();say("Product submitted for review.");
+ }catch(err){say("Product upload failed: "+err.message)}
+};
+async function loadWorkers(){
+ try{const s=await getDocs(query(collection(db,"workers"),where("status","==","approved"),orderBy("createdAt","desc")));$("workerList").innerHTML="";
+ s.forEach(x=>{const d=x.data();$("workerList").append(makeCard(d.name,`<p><b>Work:</b> ${esc(d.work)}</p><p><b>Skill:</b> ${esc(d.skill)}</p><p><b>Area:</b> ${esc(d.city)}</p><p>${esc(d.about)}</p><span class="tag">Verified listing</span>`))});
+ if(!$("workerList").children.length)$("workerList").textContent="No approved worker listings yet.";
+ }catch(e){$("workerList").textContent="Worker listings could not load. Check Firestore indexes/rules."}
+}
+async function loadBusinesses(){
+ try{const s=await getDocs(query(collection(db,"businesses"),where("status","==","approved"),orderBy("createdAt","desc")));$("businessList").innerHTML="";
+ s.forEach(x=>{const d=x.data(),b=makeCard(d.businessName,`<p><b>Work:</b> ${esc(d.work)}</p><p><b>Workers needed:</b> ${esc(d.count)}</p><p><b>Salary:</b> ${esc(d.salary)}</p><p><b>Skill:</b> ${esc(d.skill)}</p><p><b>Area:</b> ${esc(d.city)}</p><p>${esc(d.details)}</p>`);
+ const btn=document.createElement("button");btn.textContent="Join this Business";btn.onclick=()=>apply(x.id,d.businessName);b.append(btn);$("businessList").append(b)});
+ if(!$("businessList").children.length)$("businessList").textContent="No approved businesses yet.";
+ }catch(e){$("businessList").textContent="Business listings could not load. Check Firestore indexes/rules."}
+}
+async function apply(id,name){
+ const applicant=prompt("Your name");if(!applicant)return;const skill=prompt("What work can you do?");if(!skill)return;const city=prompt("Your city / area");if(!city)return;
+ try{await addDoc(collection(db,"applications"),{businessId:id,businessName:name,applicant,skill,city,status:"pending",createdAt:serverTimestamp()});say("Application submitted. The business/admin can review it.");}
+ catch(e){say("Application failed: "+e.message)}
+}
+async function loadProducts(){
+ try{const s=await getDocs(query(collection(db,"products"),where("status","==","approved"),orderBy("createdAt","desc")));$("productList").innerHTML="";
+ s.forEach(x=>{const d=x.data(),b=makeCard(d.title,`<p><b>Price:</b> ${esc(d.price)}</p><p><b>Area:</b> ${esc(d.city)}</p><p>${esc(d.description)}</p>`);
+ (d.photos||[]).forEach(p=>{const im=document.createElement("img");im.src=p.url;im.alt=d.title;b.append(im)});$("productList").append(b)});
+ if(!$("productList").children.length)$("productList").textContent="No approved products yet.";
+ }catch(e){$("productList").textContent="Products could not load. Check Firestore indexes/rules."}
+}
+async function loadAds(){
+ try{const s=await getDocs(query(collection(db,"advertisements"),orderBy("createdAt","desc")));$("adList").innerHTML="";
+ s.forEach(x=>{const d=x.data(),b=makeCard(d.title,`<p>${esc(d.description)}</p>`);
+ (d.media||[]).forEach(m=>{const el=document.createElement(m.type.startsWith("video/")?"video":"img");el.src=m.url;if(el.tagName==="VIDEO"){el.controls=true;el.playsInline=true}b.append(el)});$("adList").append(b)});
+ if(!$("adList").children.length)$("adList").textContent="No advertisements published yet.";
+ }catch(e){$("adList").textContent="Advertisements could not load."}
+}
+$("adForm").onsubmit=async e=>{
+ e.preventDefault();if(!currentUser||currentUser.uid!==ADMIN_UID)return say("Admin only.");
+ const f=e.target,d=formObj(f),files=[...f.elements.media.files];
+ if(!files.length||files.length>5)return say("Choose 1 to 5 files.");
+ if(files.some(x=>!(x.type.startsWith("image/")||x.type.startsWith("video/"))))return say("Only photos and videos are allowed.");
+ try{const media=[];for(const file of files)media.push(await uploadFile(file,`advertisements/${crypto.randomUUID()}_${file.name}`));
+ await addDoc(collection(db,"advertisements"),{title:d.title,description:d.description,media,createdAt:serverTimestamp(),createdBy:currentUser.uid});
+ f.reset();say("Advertisement published for everyone.");await loadAds();await loadAdmin();}
+ catch(err){say("Advertisement upload failed: "+err.message)}
+};
+async function loadAdmin(){
+ if(!currentUser||currentUser.uid!==ADMIN_UID)return;
+ $("reviewList").innerHTML="";$("adminAdList").innerHTML="";
+ for(const name of ["workers","businesses","products"]){
+  const s=await getDocs(query(collection(db,name),where("status","==","pending")));
+  s.forEach(x=>{const d=x.data(),title=d.name||d.businessName||d.title;
+   const b=makeCard(`${name}: ${title}`,`<p>${esc(d.work||d.description||d.city||"")}</p>`);
+   const approve=document.createElement("button");approve.textContent="Approve";approve.onclick=async()=>{await updateDoc(doc(db,name,x.id),{status:"approved"});await loadAdmin();await loadWorkers();await loadBusinesses();await loadProducts()};
+   const reject=document.createElement("button");reject.textContent="Reject";reject.className="danger";reject.onclick=async()=>{if(confirm("Delete this submission?")){await deleteDoc(doc(db,name,x.id));await loadAdmin()}};
+   b.append(approve,reject);$("reviewList").append(b);
+  });
+ }
+ const ads=await getDocs(collection(db,"advertisements"));
+ ads.forEach(x=>{const b=makeCard(x.data().title||"Advertisement","");const del=document.createElement("button");del.textContent="Delete advertisement";del.className="danger";del.onclick=async()=>{if(confirm("Delete this ad?")){await deleteDoc(doc(db,"advertisements",x.id));await loadAds();await loadAdmin()}};b.append(del);$("adminAdList").append(b)});
+ if(!$("reviewList").children.length)$("reviewList").textContent="No pending submissions.";
+}
+</script>
+</body>
+</html>
