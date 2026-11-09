@@ -979,3 +979,336 @@ return String(value ?? "").replace(/[&<>"']/g, char => ({
 
 </body>
 </html>
+
+}create table public.workers (
+  id uuid primary key default gen_random_uuid(),
+  name text not null,
+  work_type text,
+  city text,
+  created_at timestamptz default now()
+);
+
+create table public.businesses (
+  id uuid primary key default gen_random_uuid(),
+  business_name text not null,
+  work_type text,
+  salary text,
+  workers_needed integer,
+  city text,
+  created_at timestamptz default now()
+);
+
+create table public.applications (
+  id uuid primary key default gen_random_uuid(),
+  worker_name text not null,
+  business_id uuid references public.businesses(id),
+  created_at timestamptz default now()
+);
+
+alter table public.workers enable row level security;
+alter table public.businesses enable row level security;
+alter table public.applications enable row level security;
+
+create policy "Public worker access"
+on public.workers for select
+to anon using (true);
+
+create policy "Public worker registration"
+on public.workers for insert
+to anon with check (true);
+
+create policy "Public business access"
+on public.businesses for select
+to anon using (true);
+
+create policy "Public business registration"
+on public.businesses for insert
+to anon with check (true);
+
+create policy "Public application submission"
+on public.applications for insert
+to anon with check (true);
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Sahyog - Find Workers & Businesses</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+body {
+  font-family: Arial;
+  background: #f2f5fa;
+  margin: 0;
+  text-align: center;
+}
+
+header {
+  background: #0759a5;
+  color: white;
+  padding: 25px;
+}
+
+button {
+  background: #0878d1;
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  margin: 8px;
+  border-radius: 7px;
+  cursor: pointer;
+}
+
+input {
+  display: block;
+  width: 85%;
+  padding: 12px;
+  margin: 10px auto;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+section {
+  background: white;
+  padding: 18px;
+  margin: 15px;
+  border-radius: 10px;
+}
+
+.card {
+  background: #edf5ff;
+  margin: 12px;
+  padding: 15px;
+  border-radius: 8px;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+<h1>🤝 सहयोग - SAHYOG</h1>
+<p>काम ढूँढें, काम देने वाले से जुड़ें</p>
+</header>
+
+<section>
+<h2>आप क्या ढूँढ रहे हैं?</h2>
+<button onclick="show('workerForm')">Register as Worker</button>
+<button onclick="show('businessForm')">Register Business</button>
+<button onclick="loadWorkers()">Find Worker</button>
+<button onclick="loadBusinesses()">Find Businesses</button>
+</section>
+
+<section id="workerForm" hidden>
+<h2>Worker Registration</h2>
+
+<input id="wname" placeholder="Your Name">
+<input id="wtype" placeholder="Your Work / Skills">
+<input id="wcity" placeholder="Your City">
+
+<button onclick="registerWorker()">Register Worker</button>
+</section>
+
+<section id="businessForm" hidden>
+<h2>Business Registration</h2>
+
+<input id="bname" placeholder="Business Name">
+<input id="btype" placeholder="Work Required">
+<input id="bsalary" placeholder="Salary Offered">
+<input id="bnumber" type="number" placeholder="Workers Needed">
+<input id="bcity" placeholder="City">
+
+<button onclick="registerBusiness()">Register Business</button>
+</section>
+
+<section>
+<h2>Registered Workers</h2>
+<div id="workersList">Loading...</div>
+</section>
+
+<section>
+<h2>Registered Businesses</h2>
+<div id="businessList">Loading...</div>
+</section>
+
+<script>
+
+// अपनी Supabase जानकारी यहाँ डालें
+
+const SUPABASE_URL = "YOUR_PROJECT_URL";
+const SUPABASE_KEY = "YOUR_PUBLISHABLE_KEY";
+
+const db = supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY
+);
+
+function show(id) {
+  document.getElementById(id).hidden = false;
+}
+
+async function registerWorker() {
+
+  const name = document.getElementById("wname").value.trim();
+  const work = document.getElementById("wtype").value.trim();
+  const city = document.getElementById("wcity").value.trim();
+
+  if (!name || !work || !city) {
+    alert("Please fill all details");
+    return;
+  }
+
+  const { error } = await db.from("workers").insert([{
+    name: name,
+    work_type: work,
+    city: city
+  }]);
+
+  if (error) {
+    alert("Registration Failed: " + error.message);
+    return;
+  }
+
+  alert("Worker Registered Successfully!");
+
+  document.getElementById("wname").value = "";
+  document.getElementById("wtype").value = "";
+  document.getElementById("wcity").value = "";
+
+  loadWorkers();
+}
+
+async function registerBusiness() {
+
+  const name = document.getElementById("bname").value.trim();
+  const work = document.getElementById("btype").value.trim();
+  const salary = document.getElementById("bsalary").value.trim();
+  const number = Number(document.getElementById("bnumber").value);
+  const city = document.getElementById("bcity").value.trim();
+
+  if (!name || !work || !salary || !number || !city) {
+    alert("Please fill all details");
+    return;
+  }
+
+  const { error } = await db.from("businesses").insert([{
+    business_name: name,
+    work_type: work,
+    salary: salary,
+    workers_needed: number,
+    city: city
+  }]);
+
+  if (error) {
+    alert("Registration Failed: " + error.message);
+    return;
+  }
+
+  alert("Business Registered Successfully!");
+
+  loadBusinesses();
+}
+
+async function loadWorkers() {
+
+  const { data, error } = await db
+    .from("workers")
+    .select("*")
+    .order("created_at", {ascending: false});
+
+  const list = document.getElementById("workersList");
+
+  if (error) {
+    list.innerText = "Could not load workers.";
+    return;
+  }
+
+  list.innerHTML = "";
+
+  data.forEach(worker => {
+
+    list.innerHTML += `
+      <div class="card">
+        <h3>${escapeHTML(worker.name)}</h3>
+        <p>Work: ${escapeHTML(worker.work_type)}</p>
+        <p>City: ${escapeHTML(worker.city)}</p>
+      </div>
+    `;
+
+  });
+}
+
+async function loadBusinesses() {
+
+  const { data, error } = await db
+    .from("businesses")
+    .select("*")
+    .order("created_at", {ascending: false});
+
+  const list = document.getElementById("businessList");
+
+  if (error) {
+    list.innerText = "Could not load businesses.";
+    return;
+  }
+
+  list.innerHTML = "";
+
+  data.forEach(business => {
+
+    list.innerHTML += `
+      <div class="card">
+        <h3>${escapeHTML(business.business_name)}</h3>
+        <p>Work: ${escapeHTML(business.work_type)}</p>
+        <p>Salary: ${escapeHTML(business.salary)}</p>
+        <p>Workers Needed: ${business.workers_needed}</p>
+        <p>City: ${escapeHTML(business.city)}</p>
+
+        <button onclick="joinBusiness('${business.id}')">
+          Join
+        </button>
+      </div>
+    `;
+
+  });
+}
+
+function escapeHTML(value) {
+  return String(value ?? "").replace(/[&<>"']/g, char => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#39;"
+  })[char]);
+}
+
+async function joinBusiness(id) {
+
+  const name = prompt("Enter your name:");
+
+  if (!name || !name.trim()) return;
+
+  const { error } = await db.from("applications").insert([{
+    worker_name: name.trim(),
+    business_id: id
+  }]);
+
+  if (error) {
+    alert("Application Failed: " + error.message);
+    return;
+  }
+
+  alert("Application Submitted Successfully!");
+}
+
+loadWorkers();
+loadBusinesses();
+
+</script>
+
+</body>
+</html>
